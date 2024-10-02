@@ -29,25 +29,27 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['setToken']),
-    async register() {
-      console.log('Register button clicked');
-      try {
-        const response = await axios.post('/register', {
-          username: this.username,
-          email: this.email,
-          password: this.password,
-        });
-        console.log('Registration successful:', response.data);
-        const { token } = response.data;
-        this.setToken(token); // Store the token in Vuex
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`; // Set the token in Axios headers
-        this.$router.push('/login'); // Redirect to login page
-      } catch (error) {
-        console.error('Error registering:', error);
-      }
-    },
+  ...mapActions(['setToken']),
+  async register() {
+    try {
+      const response = await axios.post('/register', {
+        username: this.username,
+        email: this.email,
+        password: this.password,
+      });
+      const { token } = response.data; // Ensure backend response includes token
+      this.setToken(token); // Store the token in Vuex
+      // Set the token in Axios headers
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      // Redirect to the dashboard after successful registration
+      this.$router.push('/user-dashboard');
+    } catch (error) {
+      console.error('Error registering:', error);
+      alert('Registration failed. Please try again.');
+    }
   },
+}
+
 };
 </script>
 

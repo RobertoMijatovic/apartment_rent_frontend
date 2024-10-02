@@ -27,28 +27,33 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['login']),
-    async login() {
-      try {
-        const response = await axios.post('/login', {
-          email: this.email,
-          password: this.password,
-        });
-        const { token, role } = response.data;
-        this.login({ token, role });
-        console.log('Login successful:', response.data);
-        if (role === 1) {
-          this.$router.push({ name: 'admin_dashboard' });
-        } else if (role === 2) {
-          this.$router.push({ name: 'moderator_dashboard' });
-        } else {
-          this.$router.push({ name: 'user_dashboard' });
-        }
-      } catch (error) {
-        console.error('Error logging in:', error);
+  ...mapActions(['setToken']),
+  async login() {
+    try {
+      const response = await axios.post('/login', {
+        email: this.email,
+        password: this.password,
+      });
+      const { token, role } = response.data; // Ensure backend response includes token and role
+      this.setToken(token); // Store the token in Vuex
+      // Set the token in Axios headers
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      console.log('Login successful:', response.data);
+      // Navigate based on role
+      if (role === 1) {
+        this.$router.push({ name: 'admin_dashboard' });
+      } else if (role === 2) {
+        this.$router.push({ name: 'moderator_dashboard' });
+      } else {
+        this.$router.push({ name: 'user_dashboard' });
       }
-    },
+    } catch (error) {
+      console.error('Error logging in:', error);
+      alert('Login failed. Please try again.');
+    }
   },
+}
+
 };
 </script>
 

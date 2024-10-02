@@ -17,9 +17,13 @@ export default createStore({
   actions: {
     setToken({ commit }, token) {
       commit('setToken', token);
+      // Set token in local storage for persistence
+      localStorage.setItem('token', token);
     },
     clearToken({ commit }) {
       commit('clearToken');
+      localStorage.removeItem('token');
     },
   },
+  
 });

@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import store from './store';
 import LandingPage from './components/LandingPage.vue';
 import DailyRents from './components/daily_rents.vue';
 import LongTermRents from './components/long_term_rents.vue';
@@ -30,7 +29,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const publicPages = ['/', '/login', '/register'];
   const authRequired = !publicPages.includes(to.path);
-  const loggedIn = store.state.token;
+  const loggedIn = localStorage.getItem('token'); // Check local storage for token
 
   if (authRequired && !loggedIn) {
     return next('/login');
@@ -38,5 +37,6 @@ router.beforeEach((to, from, next) => {
 
   next();
 });
+
 
 export default router;
