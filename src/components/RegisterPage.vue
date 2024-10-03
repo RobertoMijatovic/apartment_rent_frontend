@@ -3,13 +3,44 @@
     <div class="form-container">
       <h1>Register</h1>
       <form @submit.prevent="register">
-        <input type="text" v-model="username" placeholder="Username" required />
-        <input type="email" v-model="email" placeholder="Email" required />
-        <input type="password" v-model="password" placeholder="Password" required />
-        <button type="submit">Register</button>
+        <input
+          v-model="username"
+          type="text"
+          placeholder="Username"
+          required
+        />
+        <input
+          v-model="firstname"
+          type="text"
+          placeholder="Firstname"
+          required
+        />
+        <input
+          v-model="lastname"
+          type="text"
+          placeholder="Lastname"
+          required
+        />
+        <input
+          v-model="email"
+          type="email"
+          placeholder="Email"
+          required
+        />
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+          required
+        />
+        <button type="submit">
+          Register
+        </button>
       </form>
       <p class="login-link">
-        Already have an account? <router-link to="/login">Login here</router-link>
+        Already have an account? <router-link to="/login">
+          Login here
+        </router-link>
       </p>
     </div>
   </div>
@@ -17,39 +48,38 @@
 
 <script>
 import axios from '../axios';
-import { mapActions } from 'vuex';
 
 export default {
   name: 'RegisterPage',
   data() {
     return {
       username: '',
+      firstname: '',
+      lastname: '',
       email: '',
       password: '',
     };
   },
   methods: {
-  ...mapActions(['setToken']),
-  async register() {
-    try {
-      const response = await axios.post('/register', {
-        username: this.username,
-        email: this.email,
-        password: this.password,
-      });
-      const { token } = response.data; // Ensure backend response includes token
-      this.setToken(token); // Store the token in Vuex
-      // Set the token in Axios headers
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      // Redirect to the dashboard after successful registration
-      this.$router.push('/user-dashboard');
-    } catch (error) {
-      console.error('Error registering:', error);
-      alert('Registration failed. Please try again.');
-    }
-  },
-}
+    async register() {
+      try {
+        await axios.post('/register', {
+          username: this.username,
+          firstname: this.firstname,
+          lastname: this.lastname,
+          email: this.email,
+          password: this.password,
+        });
 
+        alert('Registration successful! Please log in.');
+
+        this.$router.push('/login');
+      } catch (error) {
+        console.error('Error registering:', error);
+        alert('Registration failed. Please try again.');
+      }
+    },
+  },
 };
 </script>
 

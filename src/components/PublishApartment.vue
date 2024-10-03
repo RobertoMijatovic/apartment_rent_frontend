@@ -1,20 +1,50 @@
 <template>
-    <div class="form-container">
-      <h1>Objavi svoju nekretninu</h1>
-      <form @submit.prevent="publish">
-        <input type="text" v-model="title" placeholder="title" required />
-        <textarea v-model="description" placeholder="Description" required></textarea>
-        <input type="number" v-model="price" placeholder="Price" required />
-        <input type="text" v-model="publisher" placeholder="Publisher" required />
-        <select v-model="localCategory" required>
-          <option value="market">Prodaj</option>
-          <option value="rent-daily">iznajmi na dan</option>
-          <option value="rent-long-term">iznajmi na duže vrijeme</option>
-        </select>
-        <button type="submit">Objavi</button>
-      </form>
-    </div>
-  </template>
+  <div class="form-container">
+    <h1>Objavi svoju nekretninu</h1>
+    <form @submit.prevent="publish">
+      <input
+        v-model="title"
+        type="text"
+        placeholder="title"
+        required
+      >
+      <textarea
+        v-model="description"
+        placeholder="Description"
+        required
+      />
+      <input
+        v-model="price"
+        type="number"
+        placeholder="Price"
+        required
+      >
+      <input
+        v-model="publisher"
+        type="text"
+        placeholder="Publisher"
+        required
+      >
+      <select
+        v-model="localCategory"
+        required
+      >
+        <option value="market">
+          Prodaj
+        </option>
+        <option value="rent-daily">
+          iznajmi na dan
+        </option>
+        <option value="rent-long-term">
+          iznajmi na duže vrijeme
+        </option>
+      </select>
+      <button type="submit">
+        Objavi
+      </button>
+    </form>
+  </div>
+</template>
   
   <script>
   export default {

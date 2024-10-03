@@ -4,56 +4,70 @@
       <h1>Login</h1>
       <form @submit.prevent="login">
         <input type="email" v-model="email" placeholder="Email" required />
-        <input type="password" v-model="password" placeholder="Password" required />
-        <button type="submit">Login</button>
+        <input
+          type="password"
+          v-model="password"
+          placeholder="Password"
+          required
+        />
+        <button type="submit" :disabled="isSubmitting">Login</button>
       </form>
       <p class="register-link">
-        Don't have an account? <router-link to="/register">Register here</router-link>
+        Don't have an account?
+        <router-link to="/register">Register here</router-link>
       </p>
     </div>
   </div>
 </template>
 
 <script>
-import axios from '../axios';
-import { mapActions } from 'vuex';
+import axios from "../axios";
+import { mapActions } from "vuex";
 
 export default {
-  name: 'LoginPage',
+  name: "LoginPage",
   data() {
     return {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
+      isSubmitting: false, // Flag to prevent multiple submissions
     };
   },
   methods: {
-  ...mapActions(['setToken']),
-  async login() {
-    try {
-      const response = await axios.post('/login', {
-        email: this.email,
-        password: this.password,
-      });
-      const { token, role } = response.data; // Ensure backend response includes token and role
-      this.setToken(token); // Store the token in Vuex
-      // Set the token in Axios headers
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      console.log('Login successful:', response.data);
-      // Navigate based on role
-      if (role === 1) {
-        this.$router.push({ name: 'admin_dashboard' });
-      } else if (role === 2) {
-        this.$router.push({ name: 'moderator_dashboard' });
-      } else {
-        this.$router.push({ name: 'user_dashboard' });
+    ...mapActions(["setToken"]),
+    async login() {
+      if (this.$store.state.token || localStorage.getItem("token")) {
+        alert("You are already logged in!");
+        return; 
       }
-    } catch (error) {
-      console.error('Error logging in:', error);
-      alert('Login failed. Please try again.');
-    }
-  },
-}
 
+      if (this.isSubmitting) return; // Prevent multiple submissions
+      this.isSubmitting = true; // Set the submitting flag
+
+      try {
+        const response = await axios.post("/login", {
+          email: this.email,
+          password: this.password,
+        });
+        const token = response.data.response.token;
+        const role = response.data.response.rolesId;
+
+        console.log(response);
+        this.setToken(token);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        console.log("Login successful:", response.data);
+
+        localStorage.setItem("role", role);
+
+        this.$router.push({ name: "landing" });
+      } catch (error) {
+        console.error("Error logging in:", error);
+        alert("Login failed. Please try again.");
+      } finally {
+        this.isSubmitting = false;
+      }
+    },
+  },
 };
 </script>
 
@@ -63,17 +77,17 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  padding: 20px; 
-  background-image: url('@/assets/stanovi.jpg');
+  padding: 20px;
+  background-image: url("@/assets/stanovi.jpg");
   background-size: cover;
   background-position: center;
 }
 
 .form-container {
-  width: 100%; 
-  max-width: 450px; 
+  width: 100%;
+  max-width: 450px;
   padding: 20px;
-  background-color: rgba(245, 245, 245, 0.9); 
+  background-color: rgba(245, 245, 245, 0.9);
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
